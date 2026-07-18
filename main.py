@@ -3,8 +3,8 @@ from interface import Interface
 from stopwatch import Stopwatch
 
 if __name__ == '__main__':
-    app = Interface("Stopwatch")
-    stopWatch = Stopwatch()
-    bidings = Bidings(app, stopWatch)
+    appInterface = Interface("Stopwatch")
+    stopWatch = Stopwatch(appInterface)
+    bidings = Bidings(appInterface, stopWatch)
 
-    app.main()
+    appInterface.main()
