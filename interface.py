@@ -1,5 +1,9 @@
 import tkinter
+from idlelib import autoexpand
 from tkinter import *
+from tkinter import ttk
+from tkinter.ttk import Treeview
+
 
 class Interface:
     def __init__(self,appTitle):
@@ -20,6 +24,7 @@ class Interface:
         self.frame = Frame(self.root, bg = "black")
         self.middleFrame = Frame(self.frame, bg="white", width=300, height=70)
         self.bottomFrame = Frame(self.frame, bg="blue", width=400, height=70)
+
 
         self.frame.pack(fill="both", expand=True)
         self.middleFrame.place(in_= self.frame, relx=0.5, rely=0.5, anchor="center")
@@ -47,6 +52,24 @@ class Interface:
         self.playButtonRight.place(in_=self.bottomFrame, relx=0.8, rely=0.5, anchor="center")
         self.stopButtonLeft.place(in_=self.bottomFrame, relx=0.2, rely=0.5, anchor="center")
 
+
+    def lapListDisplay(self):
+        self.lapFrame = Frame(self.frame, bg="white", width=400, height=300)
+        self.lapFrame.place(in_=self.frame, relx=0.5, rely=0.2, anchor="n")
+
+        self.lapList = Treeview(self.lapFrame, columns=["Number", "Interval", "ActualTime"],show="headings",height=15)
+
+        self.v_scrollbar = Scrollbar(self.lapFrame, orient = VERTICAL, command = self.lapList.yview)
+        self.lapList.configure(yscrollcommand = self.v_scrollbar.set)
+
+        self.lapList.column("Number", width = 133, anchor = "center")
+        self.lapList.column("Interval", width = 133, anchor = "center")
+        self.lapList.column("ActualTime", width = 133, anchor = "center")
+
+        self.lapList.place(in_=self.lapFrame, relx=0.0, rely=-0.08, anchor="nw")
+        self.v_scrollbar.place(in_=self.lapFrame, relx=0.95, rely=0, anchor="nw",height=300)
+
+
     def forgetCentralPlay(self):
         self.playButtonCentral.place_forget()
 
@@ -58,5 +81,15 @@ class Interface:
         self.playButtonRight.place_forget()
         self.stopButtonLeft.place_forget()
 
+    def forgetLapFrame(self):
+        self.lapFrame.place_forget()
+
+    def labelTextMoveUp(self):
+        self.middleFrame.place(in_=self.frame, relx=0.5, rely=0.1, anchor="center")
+
+    def labelTextMoveDown(self):
+        self.middleFrame.place(in_=self.frame, relx=0.5, rely=0.5, anchor="center")
+
     def main(self):
         self.root.mainloop()
+

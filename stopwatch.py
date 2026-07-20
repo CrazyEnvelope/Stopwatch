@@ -1,8 +1,11 @@
 import time
+from datetime import datetime
 
 class Stopwatch:
 
     def __init__(self, appinterface):
+        self.increment = 0
+
         self.count = 0
         self.seconds = 0
         self.minutes = 0
@@ -13,8 +16,12 @@ class Stopwatch:
         self.hourString = 0
 
         self.timer = False
+        self.isLapOn = False
         self.appInterface = appinterface
         self._next_tick_time = None
+
+        self.lapValues = []
+        self.intervalTime  = "00:00:00"
 
     def startWatch(self):
 
@@ -43,13 +50,51 @@ class Stopwatch:
         self.appInterface.forgetStopAndPlayButton()
         self.appInterface.startWatchButton()
 
+        if self.isLapOn is True:
+            self.appInterface.lapList.delete(*self.appInterface.lapList.get_children())
+            self.lapValues.clear()
+            self.increment = 0
+            self.appInterface.forgetLapFrame()
+            self.appInterface.labelTextMoveDown()
+
+        self.isLapOn = False
+
     def pauseWatch(self):
         self.timer = False
         self.appInterface.forgetPauseAndLapButton()
         self.appInterface.startAndStopButton()
 
     def lapWatch(self):
-        pass
+        if self.isLapOn is not True:
+            self.appInterface.labelTextMoveUp()
+            self.appInterface.lapListDisplay()
+            self.isLapOn = True
+
+        self.calculateIntervalAndInsertLap()
+
+    def calculateIntervalAndInsertLap(self):
+        currentTime = f"{self.hourString}:{self.minuteString}:{self.secondString}"
+
+        self.increment += 1
+
+        if (len(self.lapValues) >= 1):
+            self.intervalTime = datetime.strptime(currentTime, "%H:%M:%S") - datetime.strptime(
+                self.lapValues[len(self.lapValues) - 1]["ActualTime"], "%H:%M:%S")
+        else:
+            self.intervalTime = currentTime
+
+        lastTime = {
+            "Number": self.increment,
+            "Interval": self.intervalTime,
+            "ActualTime": currentTime,
+        }
+        self.lapValues.append(lastTime)
+        lapValuesNew = sorted(self.lapValues, key=lambda x: x["Number"], reverse=True)
+
+        self.appInterface.lapList.delete(*self.appInterface.lapList.get_children())
+
+        for i in range(len(self.lapValues)):
+            self.appInterface.lapList.insert('', 'end', values=(lapValuesNew[i]["Number"],lapValuesNew[i]["Interval"],lapValuesNew[i]["ActualTime"]))
 
     def resumeWatch(self):
         if self.timer is True:
