@@ -94,7 +94,12 @@ class Stopwatch:
         self.appInterface.lapList.delete(*self.appInterface.lapList.get_children())
 
         for i in range(len(self.lapValues)):
-            self.appInterface.lapList.insert('', 'end', values=(lapValuesNew[i]["Number"],lapValuesNew[i]["Interval"],lapValuesNew[i]["ActualTime"]))
+            tag = "oddrow"
+            if i%2 == 0:
+                tag = "evenrow"
+            else:
+                tag = "oddrow"
+            self.appInterface.lapList.insert('', 'end', values=( f"0{lapValuesNew[i]["Number"]}" if lapValuesNew[i]["Number"] < 10 else lapValuesNew[i]["Number"],f" + {lapValuesNew[i]["Interval"]}",lapValuesNew[i]["ActualTime"]),tags=tag)
 
     def resumeWatch(self):
         if self.timer is True:
